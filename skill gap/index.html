@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillGap AI & TCS NQT Simulator | Pro Edition</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-overlay">
+        <div class="login-card fade-in">
+            <h1 class="login-title">SkillGap AI</h1>
+            <p class="login-subtitle">Enter the future of career planning & prep</p>
+            <input type="text" id="username" placeholder="Username (try 'Student')">
+            <input type="password" placeholder="Password">
+            <button onclick="handleLogin()">Login to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Background Glassmorphism Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar hidden" id="app-sidebar">
+        <div class="logo"><i class="fas fa-brain"></i> SkillGap</div>
+        <ul class="nav-links">
+            <li class="active" onclick="switchSection('dashboard', this)"><i class="fas fa-home"></i> Skill Analyzer</li>
+            <li onclick="switchSection('career', this)"><i class="fas fa-chart-line"></i> Career Path</li>
+            <li onclick="switchSection('learning', this)"><i class="fas fa-book-open"></i> Learning Hub</li>
+            <li onclick="switchSection('aptitude', this)"><i class="fas fa-file-alt"></i> NQT Aptitude</li>
+            <li onclick="switchSection('coding-landing', this)"><i class="fas fa-laptop-code"></i> NQT Coding</li>
+            <li onclick="switchSection('toolkit', this)"><i class="fas fa-briefcase"></i> Career Toolkit</li>
+            <li onclick="switchSection('profile', this)"><i class="fas fa-user"></i> Profile</li>
+        </ul>
+        <div class="version-text">v4.0 Pro</div>
+    </nav>
+
+    <main class="main-content hidden" id="app-main">
+        
+        <!-- 1. Dashboard Section -->
+        <section id="dashboard-section" class="fade-in">
+            <div class="glass-card">
+                <h1>Skill Analyzer</h1>
+                <p>Enter your skills (comma separated) to detect your industry gap.</p>
+                <div class="input-row">
+                    <input type="text" id="skillInput" placeholder="e.g. JavaScript, React, Node, Python">
+                    <button class="analyze-btn" onclick="analyzeSkills()">Analyze <i class="fas fa-search"></i></button>
+                </div>
+                <div id="loader" class="loader hidden"></div>
+            </div>
+
+            <div id="analysis-results" class="hidden">
+                <div class="dashboard-grid">
+                    <div class="glass-card center-text">
+                        <h3>Skill Gap Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="skillRadarChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <h3><i class="fas fa-briefcase"></i> Predicted Role</h3>
+                        <h2 class="role-title" id="predictedRole">---</h2>
+                        <div class="score-badge" id="scoreValue">Match: 0%</div>
+                        <hr class="divider">
+                        <h4><i class="fas fa-exclamation-triangle" style="color:#ff6b6b"></i> Missing Skills</h4>
+                        <div id="gapsList" class="gaps-container"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Career Section -->
+        <section id="career-section" class="hidden fade-in">
+            <h1 class="section-title">Your Projected Trajectory</h1>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="glass-card timeline-card">
+                        <h3>Junior Developer (Entry Level)</h3>
+                        <p class="role-salary"><i class="fas fa-money-bill-wave"></i> $50k - $80k / yr</p>
+                        <p class="role-desc">Focus: Clean code, bug fixing, learning company stack.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot dot-mid"></div>
+                    <div class="glass-card timeline-card opacity-mid">
+                        <h3>Senior Engineer (3-5 Years)</h3>
+                        <p class="role-salary"><i class="fas fa-money-bill-wave"></i> $100k - $140k / yr</p>
+                        <p class="role-desc">Focus: System Architecture, Mentoring, DevOps.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot dot-end"></div>
+                    <div class="glass-card timeline-card opacity-low">
+                        <h3>Tech Lead / CTO (8+ Years)</h3>
+                        <p class="role-salary"><i class="fas fa-money-bill-wave"></i> $160k+ / yr</p>
+                        <p class="role-desc">Focus: Strategy, Management, Scalability.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Learning Section -->
+        <section id="learning-section" class="hidden fade-in">
+            <h1 class="section-title">Recommended for Your Gaps</h1>
+            <p style="color:#aaa; margin-bottom:20px;">AI-curated courses based on your missing skills.</p>
+            <div class="course-grid" id="dynamic-course-grid">
+                <p>Run an analysis in the Dashboard to see recommendations.</p>
+            </div>
+        </section>
+
+        <!-- 4. TCS NQT Aptitude Landing -->
+        <section id="aptitude-section" class="hidden fade-in">
+            <h1 class="section-title">TCS NQT Aptitude Simulator</h1>
+            <p style="color:#aaa; margin-bottom:20px;">Practice with randomized sets and timers adjusted to real exam patterns.</p>
+            <div class="glass-card">
+                <h2><i class="fas fa-layer-group"></i> Foundation & Advanced Sections</h2>
+                <hr class="divider">
+                <div class="dashboard-grid">
+                    <div class="glass-card timeline-card">
+                        <h3>Numerical Ability</h3>
+                        <p class="role-desc">Syllabus: Number Systems, P&L, Time & Work, Speed, Ratio.</p>
+                        <p class="role-salary"><i class="fas fa-stopwatch"></i> 30 Mins | 25 Questions</p>
+                        <button class="analyze-btn" style="margin-top: 15px;" onclick="startExam('numerical')">Start Exam</button>
+                    </div>
+                    <div class="glass-card timeline-card">
+                        <h3>Verbal Ability</h3>
+                        <p class="role-desc">Syllabus: Comprehension, Error Spotting, Para Jumbles.</p>
+                        <p class="role-salary"><i class="fas fa-stopwatch"></i> 30 Mins | 25 Questions</p>
+                        <button class="analyze-btn" style="margin-top: 15px;" onclick="startExam('verbal')">Start Exam</button>
+                    </div>
+                    <div class="glass-card timeline-card">
+                        <h3>Reasoning Ability</h3>
+                        <p class="role-desc">Syllabus: Blood Relations, Syllogisms, Series Patterns.</p>
+                        <p class="role-salary"><i class="fas fa-stopwatch"></i> 30 Mins | 25 Questions</p>
+                        <button class="analyze-btn" style="margin-top: 15px;" onclick="startExam('reasoning')">Start Exam</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Dynamic Live MCQ Testing Console -->
+        <section id="exam-console-section" class="hidden fade-in">
+            <div class="exam-header">
+                <h2 id="exam-title-text">Exam Console</h2>
+                <div class="timer-display"><i class="fas fa-clock"></i> Time Left: <span id="time-countdown">30:00</span></div>
+            </div>
+            <div class="glass-card" id="question-container-box"></div>
+            <div class="exam-footer">
+                <button class="analyze-btn" style="width: auto;" id="prev-q-btn" onclick="navigateQuestion(-1)"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="analyze-btn" style="width: auto;" id="next-q-btn" onclick="navigateQuestion(1)">Next <i class="fas fa-arrow-right"></i></button>
+                <button class="analyze-btn" style="width: auto; background-color: #ff4757; color: white;" id="submit-exam-btn" onclick="finishExam()">Submit Paper</button>
+            </div>
+        </section>
+
+        <!-- 6. Exam Result Display -->
+        <section id="exam-result-section" class="hidden fade-in">
+            <div class="glass-card center-text">
+                <h2>Performance Summary</h2>
+                <h1 class="role-title" id="score-percentage-text" style="font-size: 3.5rem;">0%</h1>
+                <p id="score-fraction-text" style="color: #aaa; font-size: 1.2rem; margin-bottom: 20px;">You answered 0 out of 0 questions correctly.</p>
+                <div class="score-badge" id="exam-pass-badge" style="margin-bottom: 20px;">Result evaluated</div>
+                <hr class="divider">
+                <div class="dashboard-grid" style="margin-top: 20px; text-align: left;">
+                    <div class="glass-card" style="padding: 1.5rem;">
+                        <h3><i class="fas fa-robot"></i> ML Progress Prediction</h3>
+                        <p id="ml-insight-text" style="margin-top: 15px; color: #ccc; line-height: 1.5;">Take at least 2 tests to unlock AI trend predictions.</p>
+                        <div style="margin-top: 20px;">
+                            <span class="tag" id="ml-trend-tag" style="background: var(--secondary-accent); font-size: 0.9rem; padding: 5px 10px;">Awaiting Data...</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="analyze-btn" style="width: auto; margin-top: 20px;" onclick="switchSection('aptitude')">Back to Simulator</button>
+            </div>
+        </section>
+
+        <!-- 7. Advanced Coding Landing Section -->
+        <section id="coding-landing-section" class="hidden fade-in">
+            <h1 class="section-title">NQT Advanced Coding</h1>
+            <p style="color:#aaa; margin-bottom:20px;">Simulate the real TCS NQT coding environment.</p>
+            <div class="glass-card">
+                <h2><i class="fas fa-laptop-code"></i> Live Coding Assessment</h2>
+                <hr class="divider">
+                <div class="dashboard-grid">
+                    <div class="glass-card timeline-card" style="grid-column: span 3; text-align: center;">
+                        <h3>TCS NQT Top 30 Coding Challenges</h3>
+                        <p class="role-desc">Pool of 10 Easy, 10 Medium, and 10 Hard questions frequently asked in NQT. The system will randomly assign you two problems to solve.</p>
+                        <p class="role-salary" style="font-size: 1.2rem; margin-top: 10px;"><i class="fas fa-stopwatch"></i> 30 Mins | 2 Random Problems</p>
+                        <button class="analyze-btn" style="margin-top: 15px; max-width: 300px; margin-left: auto; margin-right: auto;" onclick="startCodingExam()">Initialize Coding Exam</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Advanced Coding Console Section -->
+        <section id="coding-console-section" class="hidden fade-in">
+            <div class="exam-header">
+                <h1 class="section-title" style="margin: 0;">Coding Console</h1>
+                <div class="timer-display"><i class="fas fa-clock"></i> Time Left: <span id="coding-time-countdown">30:00</span></div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="analyze-btn active" id="btn-prob-1" style="width: auto; background-color: var(--secondary-accent);" onclick="switchCodingProblem(0)">Problem 1</button>
+                <button class="analyze-btn" id="btn-prob-2" style="width: auto; background-color: transparent; border: 1px solid var(--secondary-accent);" onclick="switchCodingProblem(1)">Problem 2</button>
+                <button class="analyze-btn" style="width: auto; margin-left: auto; background-color: #ff4757; color: white;" onclick="finishCodingExam()">Submit Code</button>
+            </div>
+            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="color: var(--accent);" id="code-prob-title">Loading Problem...</h3>
+                        <span class="tag" id="code-prob-diff">Difficulty</span>
+                    </div>
+                    <p style="margin-top: 15px; line-height: 1.6; white-space: pre-wrap;" id="code-prob-desc">Loading description...</p>
+                </div>
+                <div class="glass-card" style="display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <h3>Editor (JavaScript)</h3>
+                        <button class="analyze-btn" style="width: auto; padding: 5px 15px;" onclick="runCodingTests()">Run Code <i class="fas fa-play"></i></button>
+                    </div>
+                    <textarea id="code-editor" spellcheck="false" style="
+                        flex: 1; width: 100%; min-height: 250px; background: rgba(0, 0, 0, 0.4); 
+                        color: #00d2ff; border: 1px solid var(--glass-border); border-radius: 10px; 
+                        padding: 15px; font-family: monospace; font-size: 14px; resize: vertical; outline: none;
+                    "></textarea>
+                </div>
+            </div>
+            <div class="glass-card" style="margin-top: 20px;">
+                <h3><i class="fas fa-tasks"></i> Test Cases</h3>
+                <hr class="divider">
+                <div id="test-case-results" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="test-case-row" style="color: #aaa;">Status: Waiting for execution...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. AI Career Toolkit Section -->
+        <section id="toolkit-section" class="hidden fade-in">
+            <h1 class="section-title">AI Career Toolkit</h1>
+            <p style="color:#aaa; margin-bottom:20px;">Auto-generate your resume, portfolio code, and freelance gigs based on your skill analysis.</p>
+
+            <div class="dashboard-grid">
+                <!-- Live Resume Preview -->
+                <div class="glass-card" style="grid-column: span 1;">
+                    <h3><i class="fas fa-file-invoice"></i> Dynamic Resume</h3>
+                    <hr class="divider">
+                    <div id="resume-document" style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px solid var(--glass-border);">
+                        <h2 id="cv-name" style="color: white;">Run Analysis First</h2>
+                        <h4 id="cv-headline" style="color: var(--accent); margin-top: 5px;">---</h4>
+                        <p id="cv-summary" style="margin-top: 15px; font-size: 0.9rem; color: #ccc; line-height: 1.5;"></p>
+                        <h4 style="margin-top: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Core Skills</h4>
+                        <div id="cv-skills" class="gaps-container" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+                
+                <!-- Freelance Gig Generator -->
+                <div class="glass-card" style="grid-column: span 1;">
+                    <h3><i class="fas fa-store"></i> Freelance Gig Builder</h3>
+                    <hr class="divider">
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border);">
+                        <strong style="color: var(--secondary-accent);">Optimized Gig Title:</strong>
+                        <p id="gig-title" style="font-size: 1rem; margin: 10px 0; font-weight: bold;">---</p>
+                        <strong style="color: var(--secondary-accent);">Search Tags:</strong>
+                        <p id="gig-tags" style="font-size: 0.85rem; color: #aaa; margin: 5px 0;">---</p>
+                        <strong style="color: var(--secondary-accent); display: block; margin-top: 10px;">Description Snippet:</strong>
+                        <p id="gig-desc" style="font-size: 0.9rem; color: #ddd; margin-top: 5px; font-style: italic;">---</p>
+                    </div>
+                </div>
+
+                <!-- Glassmorphism Portfolio Code Generator -->
+                <div class="glass-card" style="grid-column: span 2;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3><i class="fas fa-code"></i> Instant Web Portfolio Code</h3>
+                        <button class="analyze-btn" style="width: auto; padding: 5px 15px;" onclick="copyPortfolioCode()"><i class="fas fa-copy"></i> Copy HTML/CSS</button>
+                    </div>
+                    <hr class="divider">
+                    <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 10px;">Deploy this glowing, frosted-glass single-page portfolio directly to GitHub Pages or Firebase.</p>
+                    <textarea id="portfolio-code-output" spellcheck="false" readonly style="
+                        width: 100%; min-height: 200px; background: rgba(0, 0, 0, 0.4); 
+                        color: #00d2ff; border: 1px solid var(--glass-border); border-radius: 10px; 
+                        padding: 15px; font-family: monospace; font-size: 13px; resize: vertical; outline: none;
+                    ">Run the Skill Analyzer on the Dashboard to generate your custom portfolio code.</textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. Profile Section -->
+        <section id="profile-section" class="hidden fade-in">
+            <div class="glass-card">
+                <div class="profile-header">
+                    <div class="avatar"><i class="fas fa-user-astronaut"></i></div>
+                    <div>
+                        <h2 id="profile-name">User</h2>
+                        <p class="profile-level" id="profile-level-text">Level 1 • Novice</p>
+                    </div>
+                </div>
+                <hr class="divider">
+                <h3>Achievements</h3>
+                <div class="achievements-row" id="achievements-row">
+                    <div class="tag achievement-tag fade-in">🚀 Ready to Start</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
